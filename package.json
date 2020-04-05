@@ -1,0 +1,45 @@
+{
+  "name": "covid-graphs",
+  "version": "0.0.1",
+  "homepage": "https://andrey5608.github.io/covid-graphs",
+  "private": true,
+  "dependencies": {
+    "@bit/nexxtway.react-rainbow.chart": "^1.10.0",
+    "@bit/nexxtway.react-rainbow.dataset": "^1.10.0",
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.5.0",
+    "@testing-library/user-event": "^7.2.1",
+    "moment": "^2.24.0",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-input-switch": "^2.2.1",
+    "react-scripts": "3.4.1"
+  },
+  "scripts": {
+	"predeploy": "npm run build",
+	"deploy": "gh-pages -d build",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "gh-pages": "^2.2.0",
+    "prettier": "2.0.2"
+  }
+}
