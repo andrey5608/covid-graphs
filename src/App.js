@@ -15,58 +15,38 @@ export default class App extends Component {
       cases: undefined,
       deaths: undefined,
       recovered: undefined,
-      country: "russia",
+      country: "Russia",
     };
     this.handleChange = this.handleChange.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
   }
 
   async refreshDataForCountry(country) {
-    const res = await fetch(apiEnpoint).then((response) => {
+    const response = await fetch(apiEnpoint).then((response) => {
       if (response.status !== 200) {
         throw new Error(`Bad response: "${response}"`);
       }
       return response;
     });
-    const result = await res.json();
+    
+    const result = await response.json();
 
-    var dates;
-    var cases;
-    var deaths;
-    var recovered;
+    var dates = [];
+    var cases = [];
+    var deaths = [];
+    var recovered = [];
 
-    switch (country.toLowerCase()) {
-      case "russia":
-        dates = result.Russia.map(function (item) {
-          return moment(item.date, "YYYY-M-DD").format("DD.MM.YYYY");
-        });
-        cases = result.Russia.map(function (item) {
-          return item.confirmed;
-        });
-        deaths = result.Russia.map(function (item) {
-          return item.deaths;
-        });
-        recovered = result.Russia.map(function (item) {
-          return item.recovered;
-        });
-        break;
-      case "usa":
-        dates = result.US.map(function (item) {
-          return moment(item.date).format("DD.MM.YYYY");
-        });
-        cases = result.US.map(function (item) {
-          return item.confirmed;
-        });
-        deaths = result.US.map(function (item) {
-          return item.deaths;
-        });
-        recovered = result.US.map(function (item) {
-          return item.recovered;
-        });
-        break;
-      default:
-        console.error(country + " was unexpected");
-        break;
+    try{
+      result[country].forEach(item => {
+        dates.push(moment(item.date, "YYYY-M-DD").format("DD.MM.YYYY"));
+        cases.push(item.confirmed);
+        deaths.push(item.deaths);
+        recovered.push(item.recovered);          
+      });
+    }
+    catch(e){
+      console.error(`The country '${country}' was unexpected. ${e}`);
+      alert(`The country '${country}' was unexpected`);
     }
 
     this.setState({
@@ -78,15 +58,11 @@ export default class App extends Component {
   }
 
   async componentDidMount() {
-    await this.refreshDataForCountry("russia");
+    await this.refreshDataForCountry(this.state.country);
   }
 
   async handleChange(event) {
-    if (event.target.value.toLowerCase() === "russia") {
-      await this.refreshDataForCountry("russia");
-    } else {
-      await this.refreshDataForCountry("usa");
-    }
+    await this.refreshDataForCountry(event.target.value);
   }
 
   componentWillUnmount() {
@@ -101,7 +77,7 @@ export default class App extends Component {
     return (
       <div className="App">
         <header className="App-header">
-          COVID-19 statistics provided by{" "}
+          COVID-19 statistics provided by
           <a href="https://github.com/CSSEGISandData/COVID-19">
             Johns Hopkins CSSE
           </a>
@@ -138,7 +114,7 @@ export default class App extends Component {
                 defaultChecked="checked"
               />
               Russia
-              <input type="radio" value="USA" name="country" /> United States
+              <input type="radio" value="US" name="country" /> United States
             </div>
           </div>
         </div>

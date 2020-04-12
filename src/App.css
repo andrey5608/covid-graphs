@@ -26,3 +26,21 @@ a:visited {
   font-size: calc(10px + 2vmin);
   color: whitesmoke;
 }
+
+@media screen and (min-width: 1920px) {
+  body {
+     width:1900px;
+     height: auto;
+  }}
+
+@media screen and (max-width: 1280px) {
+   body {
+      width:1260px;
+      height: auto;
+  }}
+
+  @media screen and (max-width: 980px) {
+    body {
+       width:960px;
+       height: auto;
+   }}
