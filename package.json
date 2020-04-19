@@ -6,6 +6,8 @@
   "dependencies": {
     "@bit/nexxtway.react-rainbow.chart": "^1.10.0",
     "@bit/nexxtway.react-rainbow.dataset": "^1.10.0",
+    "@bit/primefaces.primereact.dropdown": "^3.1.8",
+    "@bit/primefaces.primereact.internal.stylelinks": "^3.1.8",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
@@ -16,8 +18,8 @@
     "react-scripts": "3.4.1"
   },
   "scripts": {
-	"predeploy": "npm run build",
-	"deploy": "gh-pages -d build",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

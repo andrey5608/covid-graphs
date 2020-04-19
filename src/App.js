@@ -2,7 +2,9 @@ import React, { Component } from "react";
 import Chart from "@bit/nexxtway.react-rainbow.chart";
 import Dataset from "@bit/nexxtway.react-rainbow.dataset";
 import moment from "moment";
-import './App.css';
+import { Dropdown } from "@bit/primefaces.primereact.dropdown";
+import PrimereactStyle from "@bit/primefaces.primereact.internal.stylelinks";
+import "./App.css";
 
 const apiEnpoint = `https://andrey5608.github.io/covid19/timeseries.json`;
 
@@ -16,8 +18,10 @@ export default class App extends Component {
       deaths: undefined,
       recovered: undefined,
       country: "Russia",
+      countries: undefined,
     };
-    this.handleChange = this.handleChange.bind(this);
+
+    this.handlePickUp = this.handlePickUp.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
   }
 
@@ -28,23 +32,27 @@ export default class App extends Component {
       }
       return response;
     });
-    
+
     const result = await response.json();
 
+    var countries = [];
     var dates = [];
     var cases = [];
     var deaths = [];
     var recovered = [];
 
-    try{
-      result[country].forEach(item => {
+    try {
+      Object.keys(result).forEach((x) =>
+        countries.push({ label: x, value: x })
+      );
+      this.setState({ countries: countries });
+      result[country].forEach((item) => {
         dates.push(moment(item.date, "YYYY-M-DD").format("DD.MM.YYYY"));
         cases.push(item.confirmed);
         deaths.push(item.deaths);
-        recovered.push(item.recovered);          
+        recovered.push(item.recovered);
       });
-    }
-    catch(e){
+    } catch (e) {
       console.error(`The country '${country}' was unexpected. ${e}`);
       alert(`The country '${country}' was unexpected`);
     }
@@ -61,8 +69,9 @@ export default class App extends Component {
     await this.refreshDataForCountry(this.state.country);
   }
 
-  async handleChange(event) {
-    await this.refreshDataForCountry(event.target.value);
+  async handlePickUp(value) {
+    console.log(value);
+    await this.refreshDataForCountry(value);
   }
 
   componentWillUnmount() {
@@ -71,11 +80,12 @@ export default class App extends Component {
 
   render() {
     const containerStyles = {
-      width: 900
+      width: 900,
     };
 
     return (
       <div className="App">
+        <PrimereactStyle />
         <header className="App-header">
           COVID-19 statistics provided by
           <a href="https://github.com/CSSEGISandData/COVID-19">
@@ -85,7 +95,11 @@ export default class App extends Component {
         <div className="App-main">
           <div style={containerStyles}>
             <div>
-              <Chart labels={this.state.dates} type="line">
+              <Chart
+                labels={this.state.dates}
+                type="line"
+                backgroundColor="white"
+              >
                 <Dataset
                   title="Deaths"
                   values={this.state.deaths}
@@ -106,15 +120,17 @@ export default class App extends Component {
                 />
               </Chart>
             </div>
-            <div onChange={(event) => this.handleChange(event)}>
-              <input
-                type="radio"
-                value="Russia"
-                name="country"
-                defaultChecked="checked"
+            <div>
+              <Dropdown
+                style={{ width: 150 }}
+                value={this.state.country}
+                options={this.state.countries}
+                onChange={(e) => {
+                  this.setState({ country: e.value });
+                  this.handlePickUp(e.value);
+                }}
+                placeholder="Select a country"
               />
-              Russia
-              <input type="radio" value="US" name="country" /> United States
             </div>
           </div>
         </div>
