@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, * as react from "react";
 import Chart from "@bit/nexxtway.react-rainbow.chart";
 import Dataset from "@bit/nexxtway.react-rainbow.dataset";
 import moment from "moment";
@@ -9,7 +9,7 @@ import "./App.css";
 
 const apiEnpoint = `https://andrey5608.github.io/covid19/timeseries.json`;
 
-export default class App extends Component {
+export default class App extends react.Component {
   constructor() {
     super();
     this.refreshDataForCountry = this.refreshDataForCountry.bind(this);
@@ -24,44 +24,51 @@ export default class App extends Component {
       russiaCases: undefined,
       russiaDeaths: undefined,
       russiaRecovered: undefined,
+      apiData: undefined,
     };
 
     this.handlePickUp = this.handlePickUp.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
   }
 
-  async refreshDataForCountry(country) {
+  async getApiData() {
     const response = await fetch(apiEnpoint).then((response) => {
       if (response.status !== 200) {
-        throw new Error(`Bad response: "${response}"`);
+        console.log(`Bad response: "${response}"`);
       }
       return response;
     });
 
     const result = await response.json();
-
+    this.setState({
+      apiData: result,
+    });
     var countries = [];
-    var dates = [];
-    var cases = [];
-    var deaths = [];
-    var recovered = [];
 
     try {
       Object.keys(result).forEach((x) =>
         countries.push({ label: x, value: x })
       );
       this.setState({ countries: countries });
-      result[country].forEach((item) => {
-        dates.push(moment(item.date, "YYYY-M-DD").format("DD.MM.YYYY"));
-        cases.push(item.confirmed);
-        deaths.push(item.deaths);
-        recovered.push(item.recovered);
-      });
     } catch (e) {
-      console.error(`The country '${country}' was unexpected. ${e}`);
-      alert(`The country '${country}' was unexpected`);
+      console.error(`The country was unexpected. ${e}`);
     }
+  }
 
+  async refreshDataForCountry(country) {
+    var countryResult = this.state.apiData[country];
+    var dates = countryResult?.map((item) => {
+      return moment(item.date, "YYYY-M-DD").format("DD.MM.YYYY");
+    });
+    var cases = countryResult?.map((item) => {
+      return item.confirmed;
+    });
+    var deaths = countryResult?.map((item) => {
+      return item.deaths;
+    });
+    var recovered = countryResult?.map((item) => {
+      return item.recovered;
+    });
     switch (country.toLowerCase()) {
       case "russia":
         this.setState({
@@ -83,6 +90,7 @@ export default class App extends Component {
   }
 
   async componentDidMount() {
+    await this.getApiData();
     this.refreshDataForCountry("Russia");
     this.refreshDataForCountry("US");
   }
